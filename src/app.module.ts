@@ -9,6 +9,7 @@ import { APP_FILTER, APP_GUARD } from '@nestjs/core'
 import { HttpExceptionFilter } from './common/filters/http-exception.filter'
 import { AuthGuard } from './auth/auth.guard'
 import { JwtModule } from '@nestjs/jwt'
+import { ItemModule } from './item/item.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { JwtModule } from '@nestjs/jwt'
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: process.env.JWT_EXPIRY as string },
     }),
+    ItemModule,
   ],
   controllers: [AppController],
   providers: [
