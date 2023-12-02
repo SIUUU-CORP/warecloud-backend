@@ -1,5 +1,5 @@
 export interface GetCurrentUserInterface {
-    id: any;
-    email: string;
-    role: 'VENDOR' | 'CUSTOMER';
+  id: any
+  email: string
+  role: 'VENDOR' | 'CUSTOMER'
 }

@@ -13,7 +13,7 @@ export class ItemService {
     const items = await this.prisma.item.findMany({
       where: {
         NOT: {
-          stock: 0
+          stock: 0,
         },
         ...(itemName ? { name: itemName } : {}),
         ...(vendorName
