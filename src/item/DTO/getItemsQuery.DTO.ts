@@ -1,15 +1,14 @@
-import { IsOptional, IsString } from "class-validator"
-
+import { IsOptional, IsString } from 'class-validator'
 
 export class GetItemsQueryDTO {
-    @IsOptional()
-    @IsString()
-    itemName: string
+  @IsOptional()
+  @IsString()
+  itemName: string
 
-    @IsOptional()
-    @IsString()
-    vendorName: string
+  @IsOptional()
+  @IsString()
+  vendorName: string
 
-    @IsOptional()
-    page: number
+  @IsOptional()
+  page: number
 }
