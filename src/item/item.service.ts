@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { GetItemsQueryDTO } from './DTO/getItemsQuery.DTO'
+import { PaginationInterface } from 'src/common/interfaces/pagination.interface'
 
 @Injectable()
 export class ItemService {
@@ -44,12 +45,15 @@ export class ItemService {
     const hasPrev = currentPage === 1 ? false : true
     const hasNext = currentPage === maxPage ? false : true
 
+    const pagination: PaginationInterface = {
+      records: items.length,
+      hasPrev: hasPrev,
+      hasNext: hasNext,
+    }
+
     return {
       items: slicedItems,
-      pagination: {
-        hasPrev: hasPrev,
-        hasNext: hasNext,
-      },
+      pagination: pagination,
     }
   }
 
