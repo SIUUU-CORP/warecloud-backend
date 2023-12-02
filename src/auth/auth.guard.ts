@@ -24,7 +24,7 @@ export class AuthGuard implements CanActivate {
       secret: process.env.JWT_SECRET,
     })
 
-    const user = { email, id }
+    const user = { email, id, role }
     request.user = user
 
     if (this.isExpired(exp)) {

@@ -10,5 +10,6 @@ export class GetItemsQueryDTO {
   vendorName: string
 
   @IsOptional()
-  page: number
+  @IsString()
+  page: string
 }

@@ -12,6 +12,9 @@ export class ItemService {
 
     const items = await this.prisma.item.findMany({
       where: {
+        NOT: {
+          stock: 0
+        },
         ...(itemName ? { name: itemName } : {}),
         ...(vendorName
           ? {
@@ -27,14 +30,14 @@ export class ItemService {
       include: {
         user: {
           select: {
-            id: true,
             name: true,
           },
         },
       },
     })
 
-    let currentPage = page ? page : 1
+    const pageInt = parseInt(page)
+    let currentPage = pageInt ? pageInt : 1
     const maxPage = Math.ceil(items.length / TAKES_PER_PAGE)
     if (currentPage > maxPage) {
       currentPage = maxPage
@@ -65,7 +68,6 @@ export class ItemService {
       include: {
         user: {
           select: {
-            id: true,
             name: true,
           },
         },

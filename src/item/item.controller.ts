@@ -22,7 +22,7 @@ export class ItemController {
   @Get()
   @HttpCode(HttpStatus.OK)
   async getItems(@Query() query: GetItemsQueryDTO) {
-    const responseData = this.itemService.getItems(query)
+    const responseData = await this.itemService.getItems(query)
 
     return this.responseUtil.response({}, responseData)
   }
@@ -31,7 +31,7 @@ export class ItemController {
   @Get(':itemId')
   @HttpCode(HttpStatus.OK)
   async getDetailItem(@Param('itemId') itemId: string) {
-    const responseData = this.itemService.getDetailItem(itemId)
+    const responseData = await this.itemService.getDetailItem(itemId)
 
     return this.responseUtil.response({}, responseData)
   }

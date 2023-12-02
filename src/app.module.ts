@@ -10,6 +10,7 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter'
 import { AuthGuard } from './auth/auth.guard'
 import { JwtModule } from '@nestjs/jwt'
 import { ItemModule } from './item/item.module'
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ItemModule } from './item/item.module'
       signOptions: { expiresIn: process.env.JWT_EXPIRY as string },
     }),
     ItemModule,
+    OrderModule,
   ],
   controllers: [AppController],
   providers: [
