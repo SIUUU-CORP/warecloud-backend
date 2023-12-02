@@ -13,33 +13,18 @@ model User {
   password String
   address String?
   createdAt DateTime @db.Timestamptz() @default(now())
-  customer Customer?
-  vendor Vendor?
+  name String
+  phoneNumber String
+  role Role
+  orders Order[]
+  items Item[]
 
   @@index([id, email])
 }
 
-model Customer {
-  id String @default(uuid()) @id
-  fullName String
-  phoneNumber String
-  userId String @unique
-  user User @relation(fields: [userId], references: [id])
-  orders Order[]
-
-  @@index([id, userId])
-}
-
-model Vendor {
-  id String @default(uuid()) @id
-  name String
-  userId String @unique
-  user User @relation(fields: [userId], references: [id])
-  items Item[]
-  requestSupplies RequestSupply[] @relation("request_supply")
-  receiveSupplies RequestSupply[] @relation("receive_supply")
-
-  @@index([id, userId])
+enum Role {
+  CUSTOMER
+  VENDOR
 }
 
 model Item {
@@ -49,12 +34,11 @@ model Item {
   weight Int
   stock Int
   createdAt DateTime @db.Timestamptz() @default(now())
-  vendorId String
-  vendor Vendor @relation(fields: [vendorId], references: [id])
   orders Order[]
-  requestsSupply RequestSupply[]
+  userId String
+  user User @relation(fields: [userId], references: [id])
 
-  @@index([id, vendorId])
+  @@index([id, userId])
 }
 
 model Order {
@@ -64,37 +48,17 @@ model Order {
   orderStatus OrderStatus
   createdAt DateTime @db.Timestamptz() @default(now())
   updatedAt DateTime @db.Timestamptz() @updatedAt
-  customerId String
-  customer Customer @relation(fields: [customerId], references: [id])
   itemId String
   item Item @relation(fields: [itemId], references: [id])
+  userId String
+  user User @relation(fields: [userId], references: [id])
 
-  @@index([id, customerId, itemId])
+  @@index([id, itemId, userId])
 }
 
 enum OrderStatus {
   PENDING
   ACCEPTED
   DELIVERED
-}
-
-model RequestSupply {
-  id String @default(uuid()) @id
-  quantity Int
-  requestStatus RequestStatus
-  createdAt DateTime @db.Timestamptz() @default(now())
-  updatedAt DateTime @db.Timestamptz() @updatedAt
-  requestedVendorId String
-  requestedVendor Vendor @relation("request_supply", fields: [requestedVendorId], references: [id])
-  receivedVendorId String
-  receivedVendor Vendor @relation("receive_supply", fields: [receivedVendorId], references: [id])
-  itemId String
-  item Item @relation(fields: [itemId], references: [id])
-
-  @@index([id, requestedVendorId, receivedVendorId])
-}
-
-enum RequestStatus {
-  ACCEPTED
   REJECTED
 }
