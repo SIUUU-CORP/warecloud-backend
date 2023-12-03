@@ -33,12 +33,16 @@ export class OrderService {
       throw new NotFoundException('Item not found')
     }
 
-    const { price, weight, stock } = item
+    const { id, role } = user
+    const { price, weight, stock, userId } = item
+    if (id === userId) {
+      throw new ForbiddenException('Cannot order your own item')
+    }
+
     if (stock === 0) {
       throw new ForbiddenException('Item out of stock')
     }
 
-    const { id, role } = user
     let cost = price * amount
     if (role === 'CUSTOMER') {
       const shippingCost = amount * weight * SHIPPING_RATE
