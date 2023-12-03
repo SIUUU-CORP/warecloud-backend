@@ -51,12 +51,10 @@ export class ProfileController {
   @Patch('/request/:orderId')
   @HttpCode(HttpStatus.OK)
   async manageOrderRequest(
-    @GetCurrentUser() user: GetCurrentUserInterface,
     @Param('orderId') orderId: string,
     @Body() body: { isApproved: number }
   ) {
     const responseData = await this.profileService.manageOrderRequest(
-      user,
       orderId,
       body
     )

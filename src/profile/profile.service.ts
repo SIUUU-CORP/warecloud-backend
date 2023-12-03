@@ -59,13 +59,6 @@ export class ProfileService {
 
   async getRequestItem(userLoggedIn: GetCurrentUserInterface) {
     try {
-      // get user
-      const userData = await this.prisma.user.findUnique({
-        where: {
-          id: userLoggedIn.id,
-        },
-      })
-
       // get all item belong to vendor
       const item = await this.prisma.item.findMany({
         where: {
@@ -106,11 +99,7 @@ export class ProfileService {
       throw new Error('Failed to get request order')
     }
   }
-  async manageOrderRequest(
-    userLoggedIn: GetCurrentUserInterface,
-    orderId: string,
-    body: { isApproved: number }
-  ) {
+  async manageOrderRequest(orderId: string, body: { isApproved: number }) {
     try {
       const { isApproved } = body
       const order = await this.prisma.order.update({
