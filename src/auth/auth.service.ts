@@ -7,7 +7,7 @@ import { LoginDTO } from './DTO/login.DTO'
 import { PrismaService } from 'src/prisma/prisma.service'
 import * as bcrypt from 'bcrypt'
 import { sign } from 'jsonwebtoken'
-import { RegisterDTO } from './dto/register.dto'
+import { RegisterDTO } from './DTO/register.DTO'
 import { Role } from '@prisma/client'
 
 @Injectable()
