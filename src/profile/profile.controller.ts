@@ -5,6 +5,7 @@ import {
   HttpStatus,
   Get,
   Patch,
+  Param,
 } from '@nestjs/common'
 import { ProfileService } from './profile.service'
 import { GetCurrentUser } from 'src/common/decorators/getCurrentUser.decorator'
@@ -28,6 +29,41 @@ export class ProfileController {
     return this.responseUtil.response(
       {
         responseMessage: 'User data successfully fetched',
+      },
+      responseData
+    )
+  }
+
+  // Get request order
+  @Get('/request')
+  @HttpCode(HttpStatus.OK)
+  async getRequestOrder(@GetCurrentUser() user: GetCurrentUserInterface) {
+    const responseData = await this.profileService.getRequestItem(user)
+
+    return this.responseUtil.response(
+      {
+        responseMessage: 'User order request data successfully fetched',
+      },
+      responseData
+    )
+  }
+  // Approve or reject request order
+  @Patch('/request/:orderId')
+  @HttpCode(HttpStatus.OK)
+  async manageOrderRequest(
+    @GetCurrentUser() user: GetCurrentUserInterface,
+    @Param('orderId') orderId: string,
+    @Body() body: { isApproved: number }
+  ) {
+    const responseData = await this.profileService.manageOrderRequest(
+      user,
+      orderId,
+      body
+    )
+
+    return this.responseUtil.response(
+      {
+        responseMessage: 'Order status successfully changed',
       },
       responseData
     )
