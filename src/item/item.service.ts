@@ -25,8 +25,8 @@ export class ItemService {
         },
         OR: [
           { name: { contains: search, mode: 'insensitive' } },
-          { user: { name: { contains: search, mode: 'insensitive' } } }
-        ]
+          { user: { name: { contains: search, mode: 'insensitive' } } },
+        ],
       },
       orderBy: {
         createdAt: 'desc',
