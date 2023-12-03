@@ -11,6 +11,7 @@ import { AuthGuard } from './auth/auth.guard'
 import { JwtModule } from '@nestjs/jwt'
 import { ItemModule } from './item/item.module'
 import { OrderModule } from './order/order.module'
+import { ProfileModule } from './profile/profile.module'
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { OrderModule } from './order/order.module'
     }),
     ItemModule,
     OrderModule,
+    ProfileModule,
   ],
   controllers: [AppController],
   providers: [
