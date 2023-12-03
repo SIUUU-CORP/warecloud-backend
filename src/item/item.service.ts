@@ -15,7 +15,7 @@ import { UpdateItemDTO } from './DTO/updateItem.DTO'
 export class ItemService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getItems({ itemName, vendorName, page }: GetItemsQueryDTO) {
+  async getItems({ search, page }: GetItemsQueryDTO) {
     const TAKES_PER_PAGE = 24
 
     const items = await this.prisma.item.findMany({
@@ -23,14 +23,10 @@ export class ItemService {
         NOT: {
           stock: 0,
         },
-        ...(itemName ? { name: itemName } : {}),
-        ...(vendorName
-          ? {
-              user: {
-                name: vendorName,
-              },
-            }
-          : {}),
+        OR: [
+          { name: { contains: search, mode: 'insensitive' } },
+          { user: { name: { contains: search, mode: 'insensitive' } } }
+        ]
       },
       orderBy: {
         createdAt: 'desc',
@@ -57,7 +53,7 @@ export class ItemService {
     const hasNext = currentPage === maxPage ? false : true
 
     const pagination: PaginationInterface = {
-      records: items.length,
+      pages: maxPage,
       hasPrev: hasPrev,
       hasNext: hasNext,
     }
