@@ -43,14 +43,14 @@ export class ItemService {
     const pageInt = parseInt(page)
     let currentPage = pageInt ? pageInt : 1
     const maxPage = Math.ceil(items.length / TAKES_PER_PAGE)
-    if (currentPage > maxPage) {
+    if (currentPage > maxPage && maxPage !== 0) {
       currentPage = maxPage
     }
 
     const numPrevItems = (currentPage - 1) * TAKES_PER_PAGE
     const slicedItems = items.slice(numPrevItems, numPrevItems + TAKES_PER_PAGE)
     const hasPrev = currentPage === 1 ? false : true
-    const hasNext = currentPage === maxPage ? false : true
+    const hasNext = (currentPage === maxPage || maxPage === 0) ? false : true
 
     const pagination: PaginationInterface = {
       pages: maxPage,
