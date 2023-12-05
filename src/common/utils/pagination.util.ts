@@ -4,7 +4,7 @@ import { PaginationInterface } from '../interfaces/pagination.interface'
 @Injectable()
 export class PaginationUtil {
   paginate<T>(page: string, data: T[]) {
-    const TAKES_PER_PAGE = 24
+    const TAKES_PER_PAGE = 10
 
     const pageInt = parseInt(page)
     let currentPage = pageInt ? pageInt : 1
@@ -18,6 +18,7 @@ export class PaginationUtil {
 
     const pagination: PaginationInterface = {
       records: data.length,
+      pages: maxPage,
       hasPrev: currentPage !== 1,
       hasNext: currentPage !== maxPage,
     }
