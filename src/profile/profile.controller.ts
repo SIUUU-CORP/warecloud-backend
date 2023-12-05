@@ -6,6 +6,7 @@ import {
   Get,
   Patch,
   Param,
+  Query,
 } from '@nestjs/common'
 import { ProfileService } from './profile.service'
 import { GetCurrentUser } from 'src/common/decorators/getCurrentUser.decorator'
@@ -37,8 +38,11 @@ export class ProfileController {
   // Get request order
   @Get('/request')
   @HttpCode(HttpStatus.OK)
-  async getRequestOrder(@GetCurrentUser() user: GetCurrentUserInterface) {
-    const responseData = await this.profileService.getRequestItem(user)
+  async getRequestOrder(
+    @GetCurrentUser() user: GetCurrentUserInterface,
+    @Query('page') page: string
+  ) {
+    const responseData = await this.profileService.getRequestItem(user, page)
 
     return this.responseUtil.response(
       {

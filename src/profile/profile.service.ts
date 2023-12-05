@@ -2,10 +2,14 @@ import { Injectable } from '@nestjs/common'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { GetCurrentUserInterface } from 'src/common/interfaces/getCurrentUser.interface'
 import { editProfileDTO } from './DTO/edit-profile.DTO'
+import { PaginationUtil } from 'src/common/utils/pagination.util'
 
 @Injectable()
 export class ProfileService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly paginationUtil: PaginationUtil,
+    private readonly prisma: PrismaService
+  ) {}
 
   async getProfile(userLoggedIn: GetCurrentUserInterface) {
     try {
@@ -57,7 +61,7 @@ export class ProfileService {
     }
   }
 
-  async getRequestItem(userLoggedIn: GetCurrentUserInterface) {
+  async getRequestItem(userLoggedIn: GetCurrentUserInterface, page: string) {
     try {
       // get all item belong to vendor
       const item = await this.prisma.item.findMany({
@@ -93,7 +97,8 @@ export class ProfileService {
           item: true,
         },
       })
-      return { data: ordersForItems }
+      const data = this.paginationUtil.paginate(page, ordersForItems)
+      return { orders: data.paginatedData, pagination: data.pagination }
     } catch (error) {
       console.error('Error occurred while fetching request order:', error)
       throw new Error('Failed to get request order')
