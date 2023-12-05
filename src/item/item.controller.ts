@@ -12,7 +12,10 @@ import {
 } from '@nestjs/common'
 import { ItemService } from './item.service'
 import { IsPublic } from 'src/common/decorators/isPublic.decorator'
-import { GetItemsQueryDTO } from './DTO/getItemsQuery.DTO'
+import {
+  GetItemsQueryDTO,
+  GetPublicItemsQueryDTO,
+} from './DTO/getItemsQuery.DTO'
 import { ResponseUtil } from 'src/common/utils/response.util'
 import { allowedRole } from 'src/common/decorators/allowedRole.decorator'
 import { Role } from '@prisma/client'
@@ -31,8 +34,19 @@ export class ItemController {
   @IsPublic()
   @Get()
   @HttpCode(HttpStatus.OK)
-  async getItems(@Query() query: GetItemsQueryDTO) {
-    const responseData = await this.itemService.getItems(query)
+  async getPublicItems(@Query() query: GetPublicItemsQueryDTO) {
+    const responseData = await this.itemService.getPublicItems(query)
+    return this.responseUtil.response({}, responseData)
+  }
+
+  @allowedRole(Role.VENDOR)
+  @Get('me')
+  @HttpCode(HttpStatus.OK)
+  async getItems(
+    @Query() query: GetItemsQueryDTO,
+    @GetCurrentUser() user: GetCurrentUserInterface
+  ) {
+    const responseData = await this.itemService.getItems(query, user)
 
     return this.responseUtil.response({}, responseData)
   }
@@ -40,8 +54,9 @@ export class ItemController {
   @IsPublic()
   @Get(':itemId')
   @HttpCode(HttpStatus.OK)
-  async getDetailItem(@Param('itemId') itemId: string) {
-    const responseData = await this.itemService.getDetailItem(itemId)
+  async getPublicDetailItem(@Param('itemId') itemId: string) {
+    console.log('asdsadsadsads')
+    const responseData = await this.itemService.getPublicDetailItem(itemId)
 
     return this.responseUtil.response({}, responseData)
   }
