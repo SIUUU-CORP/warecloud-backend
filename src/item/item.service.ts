@@ -22,20 +22,16 @@ export class ItemService {
     private readonly prisma: PrismaService
   ) {}
 
-  async getPublicItems({ itemName, vendorName, page }: GetPublicItemsQueryDTO) {
+  async getPublicItems({ search, page }: GetPublicItemsQueryDTO) {
     const items = await this.prisma.item.findMany({
       where: {
         NOT: {
           stock: 0,
         },
-        ...(itemName ? { name: itemName } : {}),
-        ...(vendorName
-          ? {
-              user: {
-                name: vendorName,
-              },
-            }
-          : {}),
+        OR: [
+          { name: { contains: search, mode: 'insensitive' } },
+          { user: { name: { contains: search, mode: 'insensitive' } } },
+        ],
       },
       orderBy: {
         createdAt: 'desc',

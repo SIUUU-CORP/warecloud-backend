@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common'
 import { Response } from 'express'
 import { Prisma } from '@prisma/client'
-import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken'
+import { TokenExpiredError } from 'jsonwebtoken'
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {

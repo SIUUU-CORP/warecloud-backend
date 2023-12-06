@@ -9,7 +9,7 @@ export class PaginationUtil {
     const pageInt = parseInt(page)
     let currentPage = pageInt ? pageInt : 1
     const maxPage = Math.ceil(data.length / TAKES_PER_PAGE)
-    if (currentPage > maxPage) {
+    if (currentPage > maxPage && data.length !== 0) {
       currentPage = maxPage
     }
 
@@ -20,7 +20,7 @@ export class PaginationUtil {
       records: data.length,
       pages: maxPage,
       hasPrev: currentPage !== 1,
-      hasNext: currentPage !== maxPage,
+      hasNext: currentPage !== maxPage && data.length !== 0,
     }
 
     return { paginatedData, pagination }
