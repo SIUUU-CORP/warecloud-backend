@@ -24,7 +24,7 @@ export class ProfileService {
         email: userData.email,
         role: userData.role,
         address: userData.address,
-        phone_number: userData.phoneNumber,
+        phoneNumber: userData.phoneNumber,
       }
       return { user }
     } catch (error) {
