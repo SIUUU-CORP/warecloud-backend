@@ -3,6 +3,7 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
+  UnprocessableEntityException,
 } from '@nestjs/common'
 import { PrismaService } from 'src/prisma/prisma.service'
 import {
@@ -152,11 +153,13 @@ export class ItemService {
         },
       })
     } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
-        throw new NotFoundException(`Item with id ${itemId} not found`)
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2025')
+          throw new NotFoundException(`Item with id ${itemId} not found`)
+        if (error.code === 'P2003')
+          throw new UnprocessableEntityException(
+            `Delete Unsuccessful. ${itemId} have a reference in Request Order`
+          )
       }
       throw error
     }
