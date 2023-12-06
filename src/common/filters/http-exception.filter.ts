@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common'
 import { Response } from 'express'
 import { Prisma } from '@prisma/client'
+import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken'
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -16,6 +17,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     const response = context.getResponse<Response>()
     const request = context.getRequest<Request>()
+
+    const isJwtExpiredError = exception instanceof TokenExpiredError
 
     const isPrismaError =
       exception instanceof Prisma.PrismaClientKnownRequestError ||
@@ -27,13 +30,17 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const handlePrismaQueryError =
       process.env.NODE_ENV === 'production' && isPrismaError
 
-    const responseCode = handlePrismaQueryError
+    const responseCode = isJwtExpiredError
+      ? HttpStatus.UNAUTHORIZED
+      : handlePrismaQueryError
       ? HttpStatus.BAD_REQUEST
       : exception instanceof HttpException
       ? exception.getStatus()
       : HttpStatus.INTERNAL_SERVER_ERROR
 
-    const responseMessage = handlePrismaQueryError
+    const responseMessage = isJwtExpiredError
+      ? 'Token is expired'
+      : handlePrismaQueryError
       ? 'Invalid query'
       : exception.response?.statusCode === 400
       ? exception.response?.message

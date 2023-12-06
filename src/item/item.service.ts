@@ -5,19 +5,24 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { PrismaService } from 'src/prisma/prisma.service'
-import { GetItemsQueryDTO } from './DTO/getItemsQuery.DTO'
-import { PaginationInterface } from 'src/common/interfaces/pagination.interface'
+import {
+  GetItemsQueryDTO,
+  GetPublicItemsQueryDTO,
+} from './DTO/getItemsQuery.DTO'
 import { Item, Prisma } from '@prisma/client'
 import { CreateItemDTO } from './DTO/createItem.DTO'
 import { UpdateItemDTO } from './DTO/updateItem.DTO'
+import { PaginationUtil } from 'src/common/utils/pagination.util'
+import { GetCurrentUserInterface } from 'src/common/interfaces/getCurrentUser.interface'
 
 @Injectable()
 export class ItemService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly paginationUtil: PaginationUtil,
+    private readonly prisma: PrismaService
+  ) {}
 
-  async getItems({ search, page }: GetItemsQueryDTO) {
-    const TAKES_PER_PAGE = 24
-
+  async getPublicItems({ search, page }: GetPublicItemsQueryDTO) {
     const items = await this.prisma.item.findMany({
       where: {
         NOT: {
@@ -40,31 +45,14 @@ export class ItemService {
       },
     })
 
-    const pageInt = parseInt(page)
-    let currentPage = pageInt ? pageInt : 1
-    const maxPage = Math.ceil(items.length / TAKES_PER_PAGE)
-    if (currentPage > maxPage && maxPage !== 0) {
-      currentPage = maxPage
-    }
-
-    const numPrevItems = (currentPage - 1) * TAKES_PER_PAGE
-    const slicedItems = items.slice(numPrevItems, numPrevItems + TAKES_PER_PAGE)
-    const hasPrev = currentPage === 1 ? false : true
-    const hasNext = currentPage === maxPage || maxPage === 0 ? false : true
-
-    const pagination: PaginationInterface = {
-      pages: maxPage,
-      hasPrev: hasPrev,
-      hasNext: hasNext,
-    }
-
+    const data = this.paginationUtil.paginate(page, items)
     return {
-      items: slicedItems,
-      pagination: pagination,
+      items: data.paginatedData,
+      pagination: data.pagination,
     }
   }
 
-  async getDetailItem(itemId: string) {
+  async getPublicDetailItem(itemId: string) {
     const item = await this.prisma.item.findUnique({
       where: {
         id: itemId,
@@ -79,6 +67,30 @@ export class ItemService {
     })
 
     return { item: item }
+  }
+
+  async getItems({ page }: GetItemsQueryDTO, user: GetCurrentUserInterface) {
+    const items = await this.prisma.item.findMany({
+      where: {
+        userId: user.id,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      include: {
+        user: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    })
+
+    const data = this.paginationUtil.paginate(page, items)
+    return {
+      items: data.paginatedData,
+      pagination: data.pagination,
+    }
   }
 
   async create(vendorId: string, data: CreateItemDTO): Promise<Item> {

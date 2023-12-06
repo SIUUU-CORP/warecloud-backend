@@ -20,16 +20,12 @@ export class AuthGuard implements CanActivate {
     }
 
     const token = authorization.split(' ')[1]
-    const { exp, role, email, id } = await this.jwtService.verifyAsync(token, {
+    const { role, email, id } = await this.jwtService.verifyAsync(token, {
       secret: process.env.JWT_SECRET,
     })
 
     const user = { email, id, role }
     request.user = user
-
-    if (this.isExpired(exp)) {
-      return false
-    }
 
     const allowedRole = this.getRole(context)
     if (!!allowedRole && allowedRole !== role) {
@@ -37,11 +33,6 @@ export class AuthGuard implements CanActivate {
     }
 
     return true
-  }
-
-  private isExpired(exp: number): boolean {
-    const currentTime = Math.floor(Date.now() / 1000)
-    return currentTime > exp
   }
 
   private getPublicStatus(context: ExecutionContext) {
