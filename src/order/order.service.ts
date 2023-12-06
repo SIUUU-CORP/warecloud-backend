@@ -55,11 +55,11 @@ export class OrderService {
       const newStock = stock - amount
       await this.prisma.item.update({
         where: {
-          id: itemId
+          id: itemId,
         },
         data: {
-          stock: newStock
-        }
+          stock: newStock,
+        },
       })
     }
 
