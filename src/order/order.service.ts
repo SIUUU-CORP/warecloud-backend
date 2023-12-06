@@ -43,10 +43,24 @@ export class OrderService {
       throw new ForbiddenException('Item out of stock')
     }
 
+    if (amount > stock) {
+      throw new ForbiddenException('Stock is not sufficient')
+    }
+
     let cost = price * amount
     if (role === 'CUSTOMER') {
       const shippingCost = amount * weight * SHIPPING_RATE
       cost += shippingCost
+
+      const newStock = stock - amount
+      await this.prisma.item.update({
+        where: {
+          id: itemId,
+        },
+        data: {
+          stock: newStock,
+        },
+      })
     }
 
     const order = await this.prisma.order.create({
