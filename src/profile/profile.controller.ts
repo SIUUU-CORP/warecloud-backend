@@ -26,7 +26,6 @@ export class ProfileController {
   @HttpCode(HttpStatus.OK)
   async getProfile(@GetCurrentUser() user: GetCurrentUserInterface) {
     const responseData = await this.profileService.getProfile(user)
-
     return this.responseUtil.response(
       {
         responseMessage: 'User data successfully fetched',
