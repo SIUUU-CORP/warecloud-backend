@@ -55,7 +55,6 @@ export class ItemController {
   @Get(':itemId')
   @HttpCode(HttpStatus.OK)
   async getPublicDetailItem(@Param('itemId') itemId: string) {
-    console.log('asdsadsadsads')
     const responseData = await this.itemService.getPublicDetailItem(itemId)
 
     return this.responseUtil.response({}, responseData)
